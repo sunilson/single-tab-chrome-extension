@@ -19,9 +19,7 @@ chrome.runtime.onInstalled.addListener(function () {
     chrome.tabs.onCreated.addListener(function (tab) {
         chrome.storage.sync.get("activated", function (data) {
             if (data.activated) {
-                chrome.tabs.remove(tab.id, function () {
-                    alert("closed")
-                })
+                chrome.tabs.remove(tab.id, function () {})
             }
         })
     })

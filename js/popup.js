@@ -22,12 +22,21 @@ noButton.onclick = function (element) {
 }
 
 activationButton.onclick = function (element) {
+
     if (!activated) {
 
         let windowCount = 0;
         let tabCount = 0;
 
-        chrome.windows.getAll(function (windows) {
+        chrome.windows.getAll({
+            windowTypes: [
+                "normal",
+                "popup",
+                "panel",
+                "app",
+                "devtools"
+            ]
+        }, function (windows) {
             windowCount = windows.length
             chrome.tabs.query({
                 currentWindow: true
@@ -50,18 +59,28 @@ function closeAllButOneTab() {
     let firstTab = null
 
     chrome.windows.getAll({
-        populate: true
+        populate: true,
+        windowTypes: [
+            "normal",
+            "popup",
+            "panel",
+            "app",
+            "devtools"
+        ]
     }, function (windows) {
         windows.forEach(function (window) {
-            window.tabs.forEach(function (tab) {
-                if (!firstTab) firstTab = tab
-                else {
-                    chrome.tabs.remove(tab.id, function () {})
-                }
-                //collect all of the urls here, I will just log them instead
-            });
-            toggleActivation()
+            if (!window.incognito && window.type == "normal") {
+                window.tabs.forEach(function (tab) {
+                    if (!firstTab) firstTab = tab
+                    else {
+                        chrome.tabs.remove(tab.id, function () {})
+                    }
+                });
+            } else {
+                chrome.windows.remove(window.id, () => {})
+            }
         });
+        toggleActivation()
     });
 }
 

@@ -69,7 +69,11 @@ function toggleActivation() {
     activated = !activated
     chrome.storage.sync.set({
         activated: activated
-    }, function () {})
+    }, function () {
+        chrome.runtime.sendMessage({
+            "activated": activated
+        });
+    })
     updateButton()
 }
 

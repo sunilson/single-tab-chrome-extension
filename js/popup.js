@@ -3,6 +3,14 @@ let yesButton = document.getElementById('yesButton');
 let noButton = document.getElementById('noButton');
 let confirmSegment = document.getElementById('confirm');
 
+const windowTypes = [
+    "normal",
+    "popup",
+    "panel",
+    "app",
+    "devtools"
+]
+
 let activated = true;
 
 chrome.storage.sync.get('activated', function (data) {
@@ -29,13 +37,7 @@ activationButton.onclick = function (element) {
         let tabCount = 0;
 
         chrome.windows.getAll({
-            windowTypes: [
-                "normal",
-                "popup",
-                "panel",
-                "app",
-                "devtools"
-            ]
+            windowTypes: windowTypes
         }, function (windows) {
             windowCount = windows.length
             chrome.tabs.query({
@@ -60,13 +62,7 @@ function closeAllButOneTab() {
 
     chrome.windows.getAll({
         populate: true,
-        windowTypes: [
-            "normal",
-            "popup",
-            "panel",
-            "app",
-            "devtools"
-        ]
+        windowTypes: windowTypes
     }, function (windows) {
         windows.forEach(function (window) {
             if (!window.incognito && window.type == "normal") {
@@ -104,6 +100,4 @@ function updateButton() {
         activationButton.innerHTML = "Activate"
         activationButton.classList.add("active")
     }
-
-
 }

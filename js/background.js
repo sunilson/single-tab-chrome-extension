@@ -1,50 +1,31 @@
+const windowTypes = [
+    "normal",
+    "popup",
+    "panel",
+    "app",
+    "devtools"
+]
+
 chrome.runtime.onInstalled.addListener(function () {
+
     chrome.storage.sync.set({
         activated: true
     }, function () {});
 
-    /*
-    chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-        chrome.declarativeContent.onPageChanged.addRules([{
-            conditions: [new chrome.declarativeContent.PageStateMatcher({
-                pageUrl: {
-                    hostEquals: 'developer.chrome.com'
-                },
-            })],
-            actions: [new chrome.declarativeContent.ShowPageAction()]
-        }]);
-    });
-    */
-
     chrome.windows.onCreated.addListener(function (window) {
-        console.log(window)
         chrome.windows.getAll({
-            windowTypes: [
-                "normal",
-                "popup",
-                "panel",
-                "app",
-                "devtools"
-            ]
+            populate: true,
+            windowTypes: windowTypes
         }, function (windows) {
-            console.log(windows)
             chrome.storage.sync.get("activated", function (data) {
                 if (data.activated) {
-                    if (windows.length > 1) chrome.windows.remove(window.id, () => {
-                        console.log("removed window", window)
-                    })
+                    if (windows.length > 1) chrome.windows.remove(window.id, () => {})
                 }
                 setIcon(data.activated)
             })
         })
     }, {
-        windowTypes: [
-            "normal",
-            "popup",
-            "panel",
-            "app",
-            "devtools"
-        ]
+        windowTypes: windowTypes
     })
 
     chrome.tabs.onCreated.addListener(function (tab) {
